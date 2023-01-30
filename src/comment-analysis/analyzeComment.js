@@ -51,7 +51,7 @@ export default async function analyzeComment({ channel, channelProfileImage, com
   }
 
   // Has phone number in name
-  const phoneNumberRegExp = new RegExp(`\\+[0-9]\\d{6}`) // Text is considered as phone number when there is 7 numbers after plus sign
+  const phoneNumberRegExp = /\+\d{7}/ // Text is considered as phone number when there is 7 numbers after plus sign
   const hasPhoneNumberInName = comment.snippet.authorDisplayName
     .replace(new RegExp(`[${PlusSymbolCounterparts}]`, 'g'), '+') // Replace special character plus signs with regular numbers (It doesn't matter what numbers there are so we just replace all special numbers with 0)
     .replace(new RegExp(`[${Object.keys(NumberCounterparts)}]`, 'g'), '0') // Replace special character numbers with regular numbers (It doesn't matter what numbers there are so we just replace all special numbers with 0)
