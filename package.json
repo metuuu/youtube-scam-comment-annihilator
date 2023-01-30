@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "@googleapis/youtube": "^8.0.1",
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.0.3",
+    "string-similarity": "^4.0.4"
   }
 }

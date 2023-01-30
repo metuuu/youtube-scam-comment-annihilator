@@ -1,9 +1,11 @@
+import stringSimilarity from 'string-similarity'
 import loadImage from '../loadImage.js'
 import areImagesSimilar from './areImagesSimilar.js'
 import Counterparts, { NumberCounterparts, PlusSymbolCounterparts } from './Counterparts.js'
 import getSpecialCharacterRegExp from './getSpecialCharacterRegExp.js'
+import normalizeString from './normalizeString.js'
 import RedFlags from './RedFlags.js'
-import { NumberCounterparts, PlusSymbolCounterparts } from './Counterparts.js'
+import removeAccentsAndDiacritics from './removeAccentsAndDiacritics.js'
 
 /**
  * @param {object} props
@@ -24,8 +26,19 @@ export default async function analyzeComment({ channel, channelProfileImage, com
     channelId: comment.snippet.authorChannelId,
     channelUrl: comment.snippet.authorChannelUrl,
     displayName: comment.snippet.authorDisplayName,
+    displayNameNormalized: normalizeString(comment.snippet.authorDisplayName),
     displayNameWithoutAccentsAndDiacritics: removeAccentsAndDiacritics(comment.snippet.authorDisplayName),
     profileImage: await loadImage(comment.authorProfileImageUrl),
+  }
+
+  // Comment author name and channel name similarity check
+  const videoChannelName = normalizeString(channel.snippet.title)
+  const channelNameAndCommenterNameSimilarity = stringSimilarity.compareTwoStrings(videoChannelName, commentAuthor.displayNameNormalized)
+  if (channelNameAndCommenterNameSimilarity >= RedFlags.hasSimilarProfileName.minSimilarity) {
+    numOfRedFlags += 1
+    totalRedFlagWeight += RedFlags.hasSimilarProfileName.weight
+    redFlags.push('has-similar-name-to-channel-owner')
+    console.log('Similar name detected - ', commentAuthor.displayName)
   }
 
   // Comment author profile picture similarity to channel profile picture
