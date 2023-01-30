@@ -3,13 +3,13 @@ import { youtube } from '@googleapis/youtube'
 const yt = youtube({ version: 'v3' })
 
 
-export default async function getThreadComments({ topLevelCommentId, maxResults, pageToken }) {
+export default async function getComments({ parentId, maxResults, pageToken }) {
 
   const listCommentsResponse = await yt.comments.list({
     key: process.env.YOUTUBE_API_KEY,
-    maxResults,
+    maxResults, // Acceptable values are 1 to 100, inclusive. The default value is 20.
     pageToken,
-    parentId: topLevelCommentId,
+    parentId,
     part: ['snippet'],
   })
 
