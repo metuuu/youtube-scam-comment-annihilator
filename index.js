@@ -21,7 +21,7 @@ const channelProfileImage = await loadImage(channel.snippet.thumbnails.default.u
 
 
 // Get threads for video
-const threads = await getThreads(process.env.YOUTUBE_VIDEO_ID)
+const { threads } = await getThreads({ videoId: process.env.YOUTUBE_VIDEO_ID })
 
 
 // Analyze thread comments
