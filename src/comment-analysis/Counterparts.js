@@ -1138,7 +1138,25 @@ const OtherCounterparts = {
 }
 
 
-export const PlusSymbolCounterparts = ['±', '十', '⼗', '㈩', '㊉', '✝', '✞', '✟', '♱', '♰', '☩', '✙', '✚', '✛', '✜', '✠', '⁜']
+export const PlusSymbolCounterparts = {
+  '±': { counterpart: '+' },
+  '十': { counterpart: '+' },
+  '⼗': { counterpart: '+' },
+  '㈩': { counterpart: '+' },
+  '㊉': { counterpart: '+' },
+  '✝': { counterpart: '+' },
+  '✞': { counterpart: '+' },
+  '✟': { counterpart: '+' },
+  '♱': { counterpart: '+' },
+  '♰': { counterpart: '+' },
+  '☩': { counterpart: '+' },
+  '✙': { counterpart: '+' },
+  '✚': { counterpart: '+' },
+  '✛': { counterpart: '+' },
+  '✜': { counterpart: '+' },
+  '✠': { counterpart: '+' },
+  '⁜': { counterpart: '+' },
+}
 
 // 'ⁱ', 'ₐ', 'ₑ', 'ₒ', 'ₓ', 'ₔ'
 
@@ -1146,6 +1164,7 @@ export const PlusSymbolCounterparts = ['±', '十', '⼗', '㈩', '㊉', '✝', 
 const Counterparts = {
   ...LetterCounterparts,
   ...NumberCounterparts,
+  ...PlusSymbolCounterparts,
 }
 
 export default Counterparts
