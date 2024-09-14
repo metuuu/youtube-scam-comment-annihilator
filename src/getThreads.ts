@@ -1,9 +1,9 @@
-import { youtube } from '@googleapis/youtube'
-
+import { youtube, youtube_v3 } from '@googleapis/youtube'
+youtube_v3
 const yt = youtube({ version: 'v3' })
 
 
-export default async function getThreads({ videoId, maxResults, pageToken }) {
+export default async function getThreads({ videoId, maxResults, pageToken }: Pick<youtube_v3.Params$Resource$Commentthreads$List, 'videoId' | 'maxResults' | 'pageToken'>) {
 
   const listCommentThreadsResponse = await yt.commentThreads.list({
     key: process.env.YOUTUBE_API_KEY,

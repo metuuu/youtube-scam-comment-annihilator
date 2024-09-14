@@ -4,13 +4,16 @@
   "description": "App for cleaning YouTube comments from scam messages",
   "type": "module",
   "scripts": {
-    "start": "node index.js"
+    "start": "bun run index.ts"
   },
   "author": "Lauri Methuen",
   "license": "ISC",
   "dependencies": {
-    "@googleapis/youtube": "^8.0.1",
-    "dotenv": "^16.0.3",
+    "@googleapis/youtube": "^20.0.0",
+    "dotenv": "^16.4.5",
     "string-similarity": "^4.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.2"
   }
 }
