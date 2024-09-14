@@ -1,19 +1,14 @@
 {
-  "name": "youtube-scam-comment-annihilator",
-  "version": "0.0.1",
-  "description": "App for cleaning YouTube comments from scam messages",
-  "type": "module",
-  "scripts": {
-    "start": "bun run index.ts"
-  },
+  "name": "@metuuu/youtube-scam-comment-cleaner",
+  "version": "0.1.0",
+  "description": "",
   "author": "Lauri Methuen",
-  "license": "ISC",
-  "dependencies": {
-    "@googleapis/youtube": "^20.0.0",
-    "dotenv": "^16.4.5",
-    "string-similarity": "^4.0.4"
-  },
-  "devDependencies": {
-    "@types/node": "^22.5.2"
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "install": "npm install --prefix ./comment-analysis; npm install --force --prefix ./web",
+    "build": "npm run build --prefix ./comment-analysis; npm run build --prefix ./web",
+    "start": "npm run start --prefix ./web",
+    "dev": "npm run dev --prefix ./web"
   }
 }

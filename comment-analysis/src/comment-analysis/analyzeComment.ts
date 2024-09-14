@@ -1,9 +1,9 @@
 import { youtube_v3 } from '@googleapis/youtube'
-import stringSimilarity from 'string-similarity'
-import getSpecialCharacterRegExp from './getSpecialCharacterRegExp.ts'
 import normalizeString, { NormalizeOptions } from './normalizeString.js'
-import { ContainsWithOptions, RedFlag } from './RedFlags.ts'
+import { ContainsWithOptions, RedFlag } from './RedFlags.js'
 import removeAccentsAndDiacritics from './removeAccentsAndDiacritics.js'
+import stringSimilarity from './stringSimilarity.js'
+import getSpecialCharacterRegExp from './getSpecialCharacterRegExp.js'
 
 export default async function analyzeComment({ channel, comment, redFlags }: { channel: youtube_v3.Schema$Channel, comment: youtube_v3.Schema$Comment, redFlags: RedFlag[] }) {
 
@@ -11,10 +11,9 @@ export default async function analyzeComment({ channel, comment, redFlags }: { c
   const channelSnippet = channel!.snippet!
 
   // Ignore channel author comments
-  if (commentSnippet!.authorChannelId!.value === channel.id) return { comment, redFlags: [], numOfRedFlags: 0, totalRedFlagWeight: 0 }
+  if (commentSnippet!.authorChannelId!.value === channel.id) return { comment, redFlags: [], totalRedFlagWeight: 0 }
 
-  let triggeredRedFlags: string[] = []
-  let numOfTriggeredRedFlags = 0
+  let triggeredRedFlags: { id: string; name: string; weight: number; }[] = []
   let totalTriggeredRedFlagWeight = 0
 
   const channelDetails = {
@@ -37,19 +36,20 @@ export default async function analyzeComment({ channel, comment, redFlags }: { c
     const results: (boolean | { additionalWeight: number })[] = []
 
 
-    for (const check of toCheck || ['commenterName', 'commenterComment']) {
-      const input = check === 'commenterName' ? commentAuthor.displayName : commentSnippet.textOriginal!
+    for (const check of toCheck || ['authorName', 'comment']) {
+      const input = check === 'authorName' ? commentAuthor.displayName : commentSnippet.textOriginal!
 
       let preprocessingToUse: NormalizeOptions | boolean = false
       if (preprocessing !== false) preprocessingToUse = true
-      if (typeof preprocessing === 'object') preprocessingToUse = preprocessing[check]
+      if (typeof preprocessing === 'object') preprocessingToUse = (preprocessing as any)[check]
 
       const preprocessedInput = preprocessingToUse
         ? normalizeString(input, preprocessingToUse === true ? undefined : preprocessingToUse)
         : input
 
-      const result = handleContains(preprocessedInput, contains)
-      results.push(result)
+      const foundResults = handleContains(preprocessedInput, contains)
+      if (Array.isArray(foundResults)) results.push(...foundResults)
+      else results.push(foundResults)
     }
 
     // Results
@@ -79,7 +79,7 @@ export default async function analyzeComment({ channel, comment, redFlags }: { c
     if (Array.isArray(contains)) {
       const successResults = contains.map((c) => handleContainsWithOptions(input, c)).filter((r) => r !== false)
       if (successResults.length === 0) return false
-      return successResults.reduce((prev, current) => ({ additionalWeight: prev.additionalWeight + current.additionalWeight }), { additionalWeight: 0})
+      return successResults
     }
     else if (typeof contains === 'string' || contains instanceof RegExp) {
       return handleContainsRegExp(input, contains)
@@ -92,8 +92,8 @@ export default async function analyzeComment({ channel, comment, redFlags }: { c
 
   const handleContainsRegExp = (input: string, value: string | RegExp) => {
     return (value instanceof RegExp)
-      ? !!input.match(value)
-      : input.includes(replaceTemplatesInValue(value))
+    ? !!input.match(value)
+    : input.includes(replaceTemplatesInValue(value))
   }
 
   const handleContainsWithOptions = (input: string, contains: ContainsWithOptions): false | { additionalWeight: number } => {
@@ -106,7 +106,7 @@ export default async function analyzeComment({ channel, comment, redFlags }: { c
     }
     if ('specialCharacters' in contains) {
       const { allowedCharacters } = contains
-      if (handleContainsRegExp(input, getSpecialCharacterRegExp({ allowedCharacters }))) return false
+      if (!handleContainsRegExp(input, getSpecialCharacterRegExp({ allowedCharacters }))) return false
       return { additionalWeight }
     }
     else if (Array.isArray(contains.value)) {
@@ -137,14 +137,17 @@ export default async function analyzeComment({ channel, comment, redFlags }: { c
     const result = handleRedFlagObjectCheck(redFlag)
     if (result !== false) {
       totalTriggeredRedFlagWeight += result.additionalWeight
-      triggeredRedFlags.push(redFlag.name)
+      triggeredRedFlags.push({
+        id: redFlag.id,
+        name: redFlag.name,
+        weight: result.additionalWeight,
+      })
     }
   }
 
   return {
     comment,
     redFlags: triggeredRedFlags,
-    numOfRedFlags: numOfTriggeredRedFlags,
-    totalRedFlagWeight: totalTriggeredRedFlagWeight,
+    totalRedFlagWeight: totalTriggeredRedFlagWeight
   }
 }

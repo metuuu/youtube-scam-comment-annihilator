@@ -10,7 +10,7 @@ export type NormalizeOptions = {
   removeAccentsAndDiacritics?: boolean,
   /** @default true */
   removeSpecialCharacters?: boolean,
-  whitelistedSpecialCharacters?: RegExp[]
+  whitelistedSpecialCharacters?: string[]
   /** @default true */
   removeWhitespace?: boolean,
   /** @default true */
@@ -33,7 +33,7 @@ export default function normalizeString(str: string, options?: NormalizeOptions)
     removeWhitespace = true,
   } = options || {}
   let normalized = str
-  if (convertCounterparts) normalized = [...normalized].map((char) => String(Counterparts[char]?.counterpart ?? char).toLowerCase()).join('')
+  if (convertCounterparts) normalized = [...normalized].map((char) => String((Counterparts as any)[char]?.counterpart ?? char).toLowerCase()).join('')
   if (removeAccentsAndDiacritics) normalized = removeAccentsAndDiacriticsFunc(normalized)
   if (removeSpecialCharacters) normalized = normalized.replace(getSpecialCharacterRegExp({ allowedCharacters: whitelistedSpecialCharacters }), '')
   if (removeWhitespace) normalized = normalized.replace(/ /gm, '')

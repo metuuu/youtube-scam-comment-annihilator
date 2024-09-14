@@ -1,0 +1,24 @@
+{
+  "name": "@metuuu/analyze-youtube-comments",
+  "version": "1.0.0",
+  "private": true,
+  "author": "Lauri Methuen",
+  "license": "UNLICENSED",
+  "description": "Library for analyzing YouTube video for scam comments",
+  "type": "module",
+  "main": "./dist/index.js",
+  "scripts": {
+    "start": "tsx ./cli/analyze.ts",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "axios": "^1.7.7"
+  },
+  "devDependencies": {
+    "@googleapis/youtube": "^20.0.0",
+    "@types/node": "^22.5.4",
+    "dotenv": "^16.4.5",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.4"
+  }
+}
